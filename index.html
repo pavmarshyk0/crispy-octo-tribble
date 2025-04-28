@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Ймовірність перемоги в тенісі</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 20px;
+            background-color: #f0f8ff;
+        }
+
+        .calculator {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #34495e;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .probability-bar {
+            height: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .probability-fill {
+            height: 100%;
+            background-color: #3498db;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Калькулятор ймовірності перемоги</h1>
+        
+        <div class="input-group">
+            <label>Ймовірність гравця A (від 0 до 1):</label>
+            <input type="number" id="probA" step="0.01" value="0.6" min="0" max="1">
+        </div>
+
+        <div class="input-group">
+            <label>Ймовірність гравця B (від 0 до 1):</label>
+            <input type="number" id="probB" step="0.01" value="0.4" min="0" max="1">
+        </div>
+
+        <button onclick="calculateProbability()">Розрахувати</button>
+
+        <div id="result">
+            <h3>Результати:</h3>
+            <div class="probability-bar">
+                <div class="probability-fill" id="probabilityFill"></div>
+            </div>
+            <p>Ймовірність перемоги гравця A: <span id="resultText">0%</span></p>
+            <p>Імовірність прямого виграшу: <span id="directWin">0%</span></p>
+            <p>Імовірність переходу в дьюс: <span id="deuceProb">0%</span></p>
+        </div>
+    </div>
+
+    <script>
+        function calculateProbability() {
+            const a = parseFloat(document.getElementById('probA').value);
+            const b = parseFloat(document.getElementById('probB').value);
+            
+            // Валідація введення
+            if (a + b > 1) {
+                alert("Сума ймовірностей не може перевищувати 1!");
+                return;
+            }
+
+            // Обчислення ймовірностей
+            const pDirectWin = a ** 2;
+            const pDeuce = 2 * a * b;
+            const pDeuceWin = (a ** 2) / (a ** 2 + b ** 2);
+            const totalProbability = pDirectWin + pDeuce * pDeuceWin;
+
+            // Відображення результатів
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('resultText').textContent = 
+                `${(totalProbability * 100).toFixed(2)}% (${(totalProbability).toFixed(4)})`;
+            
+            document.getElementById('directWin').textContent = 
+                `${(pDirectWin * 100).toFixed(2)}%`;
+            
+            document.getElementById('deuceProb').textContent = 
+                `${(pDeuce * 100).toFixed(2)}%`;
+
+            // Анімація прогрес-бару
+            const fillElement = document.getElementById('probabilityFill');
+            fillElement.style.width = `${totalProbability * 100}%`;
+        }
+
+        // Ініціалізація при завантаженні
+        calculateProbability();
+    </script>
+</body>
+</html>
